@@ -1,13 +1,31 @@
-import React from 'react';
+"use client";
 
-const VenueTypeFilter: React.FC = () => {
+import React, { useEffect, useState } from 'react';
+
+interface VenueType {
+    id: number;
+    type: string;
+  }
+
+export const VenueTypeFilter= ({ onChange }: { onChange: (id: string) => void }) => {
+    const [venueTypes, setVenueTypes] = useState<VenueType[]>([]);
+  
+    useEffect(() => {
+      fetch('/api/venueTypes')
+        .then((res) => res.json())
+        .then((data) => setVenueTypes(data));
+    }, []);
+
     return (
         <div>
-            <label htmlFor="venueType">Venue Type:</label>
-            <select id="venueType" name="venueType">
-                <option value="all">All</option>
-                <option value="conference">Conference</option>
-                <option value="wedding">Wedding</option>
+            <label>Venue Type</label>
+            <select onChange={(e) => onChange(e.target.value)}>
+                <option value="">Select Venue Type</option>
+                {venueTypes.map((type) => (
+                    <option key={type.id} value={type.id}>
+                        {type.type}
+                    </option>
+            ))}
             </select>
         </div>
     );
